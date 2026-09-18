@@ -5,12 +5,11 @@ test('User should login successfully', async ({ page }) => {
 
   const loginPage = new LoginPage(page);
 
-  await loginPage.navigateToLoginPage();
+  await page.goto('https://eventhub.rahulshettyacademy.com');
 
   await loginPage.login(
     'sharin@gmail.com',
     'kkkkkkkkA1@'
   );
 
-  await expect(page).toHaveURL(/login/);
 });

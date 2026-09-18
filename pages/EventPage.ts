@@ -2,38 +2,20 @@ import { Page, Locator } from '@playwright/test';
 
 export class EventPage {
 
-  readonly page: Page;
-  readonly browseEventsLink: Locator;
-  readonly searchEventsInput: Locator;
-  readonly noEventsFoundText: Locator;
-  readonly hollywoodMonsoonEvent: Locator;
+    readonly page: Page;
+    readonly searchBox: Locator;
 
-  constructor(page: Page) {
+    constructor(page: Page) {
 
-    this.page = page;
+        this.page = page;
 
-    this.browseEventsLink = page.getByRole('link', {
-      name: 'Browse Events →'
-    });
+        this.searchBox = page.getByRole('textbox', {
+            name: 'Search events, venues…'
+        });
+    }
 
-    this.searchEventsInput = page.getByRole('textbox', {
-      name: 'Search events, venues…'
-    });
+    async searchEvent(eventName: string) {
 
-    this.noEventsFoundText = page.getByText(
-      'No events found'
-    );
-
-    this.hollywoodMonsoonEvent = page.getByText(
-      'Hollywood Monsoon Night — Los Angeles'
-    );
-  }
-
-  async clickBrowseEvents() {
-    await this.browseEventsLink.click();
-  }
-
-  async searchEvent(eventName: string) {
-    await this.searchEventsInput.fill(eventName);
-  }
+        await this.searchBox.fill(eventName);
+    }
 }

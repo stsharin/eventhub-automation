@@ -2,36 +2,30 @@ import { Page, Locator } from '@playwright/test';
 
 export class LoginPage {
 
-  readonly page: Page;
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly signinButton: Locator;
+    readonly page: Page;
+    readonly emailInput: Locator;
+    readonly passwordInput: Locator;
+    readonly signInButton: Locator;
 
-  constructor(page: Page) {
+    constructor(page: Page) {
 
-    this.page = page;
+        this.page = page;
 
-    this.emailInput = page.getByLabel('Email');
+        this.emailInput = page.getByLabel('Email');
 
-    this.passwordInput = page.getByLabel('Password');
+        this.passwordInput = page.getByLabel('Password');
 
-    this.signinButton = page.getByRole('button', {
-      name: 'Sign In'
-    });
-  }
+        this.signInButton = page.getByRole('button', {
+            name: 'Sign In'
+        });
+    }
 
-  async navigateToLoginPage() {
-    await this.page.goto(
-      'https://eventhub.rahulshettyacademy.com'
-    );
-  }
+    async login(email: string, password: string) {
 
-  async login(email: string, password: string) {
+        await this.emailInput.fill(email);
 
-    await this.emailInput.fill(email);
+        await this.passwordInput.fill(password);
 
-    await this.passwordInput.fill(password);
-
-    await this.signinButton.click();
-  }
+        await this.signInButton.click();
+    }
 }

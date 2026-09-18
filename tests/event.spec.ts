@@ -4,46 +4,48 @@ import { EventPage } from '../pages/EventPage';
 
 test.beforeEach(async ({ page }) => {
 
-  const loginPage = new LoginPage(page);
-  const eventPage = new EventPage(page);
+    const loginPage = new LoginPage(page);
+    const eventPage = new EventPage(page);
 
-  // Open application
-  await loginPage.navigateToLoginPage();
+    // Open application
+    await page.goto('https://eventhub.rahulshettyacademy.com');
 
-  // Login
-  await loginPage.login(
-    'sharin@gmail.com',
-    'kkkkkkkkA1@'
-  );
+    // Login
+    await loginPage.login(
+        'sharin@gmail.com',
+        'kkkkkkkkA1@'
+    );
 
-  await expect(page).toHaveURL(/login/);
+    await expect(page).toHaveURL(/login/);
 
-  // Go to Events page
-  await eventPage.clickBrowseEvents();
+    // Go to Events page
+    await page.getByRole('link', {
+        name: 'Browse Events →'
+    }).click();
 
-  await expect(page).toHaveURL(/events/);
+    await expect(page).toHaveURL(/events/);
 });
 
 
 test('User should see matching events', async ({ page }) => {
 
-  const eventPage = new EventPage(page);
+    const eventPage = new EventPage(page);
 
-  await eventPage.searchEvent('music');
+    await eventPage.searchEvent('music');
 
-  await expect(
-    eventPage.hollywoodMonsoonEvent
-  ).toBeVisible();
+    await expect(
+        page.getByText('Hollywood Monsoon Night — Los Angeles')
+    ).toBeVisible();
 });
 
 
 test('User should see no events found', async ({ page }) => {
 
-  const eventPage = new EventPage(page);
+    const eventPage = new EventPage(page);
 
-  await eventPage.searchEvent('xyz');
+    await eventPage.searchEvent('xyz');
 
-  await expect(
-    eventPage.noEventsFoundText
-  ).toBeVisible();
+    await expect(
+        page.getByText('No events found')
+    ).toBeVisible();
 });
