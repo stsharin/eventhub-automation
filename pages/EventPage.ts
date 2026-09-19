@@ -9,9 +9,7 @@ export class EventPage {
 
         this.page = page;
 
-        this.searchBox = page.getByRole('textbox', {
-            name: 'Search events, venues…'
-        });
+        this.searchBox = page.getByRole('textbox', { name: 'Search events, venues…'});
     }
 
     async searchEvent(eventName: string) {

@@ -49,3 +49,10 @@ test('User should see no events found', async ({ page }) => {
         page.getByText('No events found')
     ).toBeVisible();
 });
+
+test ('User should filter events by category', async ({ page }) => {
+
+    await await page.getByRole('combobox').first().selectOption('Conference');
+
+    await expect( page.getByText('World Tech Summit')).toBeVisible();
+});
