@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
-import { EventPage } from '../pages/EventPage';
+import { EventsPage } from '../pages/EventsPage';
 
 test.beforeEach(async ({ page }) => {
 
     const loginPage = new LoginPage(page);
-    const eventPage = new EventPage(page);
+    const eventsPage = new EventsPage(page);
 
     await page.goto('https://eventhub.rahulshettyacademy.com');
 
@@ -21,9 +21,9 @@ test.beforeEach(async ({ page }) => {
 
 test('User should see matching events', async ({ page }) => {
 
-    const eventPage = new EventPage(page);
+    const eventsPage = new EventsPage(page);
 
-    await eventPage.searchEvent('music');
+    await eventsPage.searchEvent('music');
 
     await expect(page.getByText('Hollywood Monsoon Night — Los Angeles')).toBeVisible();
 });
@@ -31,18 +31,65 @@ test('User should see matching events', async ({ page }) => {
 
 test('User should see no events found', async ({ page }) => {
 
-    const eventPage = new EventPage(page);
+    const eventsPage = new EventsPage(page);
 
-    await eventPage.searchEvent('xyz');
+    await eventsPage.searchEvent('xyz');
 
     await expect(page.getByText('No events found')).toBeVisible();
 });
 
 test('User should filter events by category', async ({ page }) => {
 
-    const eventsPage = new EventPage(page);
+    const eventsPage = new EventsPage(page);
 
     await eventsPage.filterByCategory('Conference');
 
     await expect(page.getByText('World Tech Summit')).toBeVisible();
+});
+
+test('User should filter events by city', async ({ page }) => {
+
+    const eventsPage = new EventsPage(page);
+
+    await eventsPage.filterByCity('Delhi');
+
+    await expect(page.getByText('Dilli Diwali Mela')).toBeVisible();
+});
+
+test('Should show no events when the selected city has no matches', async ({ page }) => {
+
+    const eventsPage = new EventsPage(page);
+
+    await eventsPage.filterByCity('Pune');
+
+    await expect(page.getByText('No events found')).toBeVisible();
+});
+
+test('User should filter events by category and city', async ({ page }) => {
+
+    const eventsPage = new EventsPage(page);
+
+    await eventsPage.filterByCategory('Festival');
+
+    await eventsPage.filterByCity('Delhi');
+
+    await expect(page.getByText('Dilli Diwali Mela')).toBeVisible();
+});
+
+test('User should clear filters', async ({ page }) => {
+
+    const eventsPage = new EventsPage(page);
+
+    await eventsPage.filterByCategory('Festival');
+    await eventsPage.filterByCity('Delhi');
+
+    await eventsPage.clearFilters();
+
+    await expect(
+        page.getByRole('combobox').first().locator('option:checked')
+    ).toHaveText('All Categories');
+
+    await expect(
+        page.getByRole('combobox').nth(1).locator('option:checked')
+    ).toHaveText('All Cities');
 });
