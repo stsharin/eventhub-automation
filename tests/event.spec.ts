@@ -7,21 +7,13 @@ test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const eventPage = new EventPage(page);
 
-    // Open application
     await page.goto('https://eventhub.rahulshettyacademy.com');
 
-    // Login
-    await loginPage.login(
-        'sharin@gmail.com',
-        'kkkkkkkkA1@'
-    );
+    await loginPage.login('sharin@gmail.com', 'kkkkkkkkA1@');
 
     await expect(page).toHaveURL(/login/);
 
-    // Go to Events page
-    await page.getByRole('link', {
-        name: 'Browse Events →'
-    }).click();
+    await page.getByRole('link', { name: 'Browse Events →' }).click();
 
     await expect(page).toHaveURL(/events/);
 });
@@ -33,9 +25,7 @@ test('User should see matching events', async ({ page }) => {
 
     await eventPage.searchEvent('music');
 
-    await expect(
-        page.getByText('Hollywood Monsoon Night — Los Angeles')
-    ).toBeVisible();
+    await expect(page.getByText('Hollywood Monsoon Night — Los Angeles')).toBeVisible();
 });
 
 
@@ -45,14 +35,14 @@ test('User should see no events found', async ({ page }) => {
 
     await eventPage.searchEvent('xyz');
 
-    await expect(
-        page.getByText('No events found')
-    ).toBeVisible();
+    await expect(page.getByText('No events found')).toBeVisible();
 });
 
-test ('User should filter events by category', async ({ page }) => {
+test('User should filter events by category', async ({ page }) => {
 
-    await await page.getByRole('combobox').first().selectOption('Conference');
+    const eventsPage = new EventPage(page);
 
-    await expect( page.getByText('World Tech Summit')).toBeVisible();
+    await eventsPage.filterByCategory('Conference');
+
+    await expect(page.getByText('World Tech Summit')).toBeVisible();
 });
