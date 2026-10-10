@@ -55,5 +55,5 @@ test('User should click on Book Now button', async ({ page }) => {
     await expect (page.getByText('Dilli Diwali Mela')).toBeVisible();
     await expect (page).toHaveURL('https://eventhub.rahulshettyacademy.com/events/285');
     await expect (page.getByText('Pragati Maidan Exhibition Grounds')).toBeVisible();
-    //await expect (page.getByText('$300', { exact: true })).toBeVisible();
+    await expect (page.getByRole('paragraph').filter({ hasText: '$' })).toBeVisible();
 });
