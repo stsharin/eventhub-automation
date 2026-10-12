@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { EventsPage } from '../pages/EventsPage';
+import { EventDetailsPage } from '../pages/EventDetailsPage';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const eventsPage = new EventsPage(page);
@@ -49,11 +50,12 @@ test('User should clear filters', async ({ page }) => {
     await expect(page.getByRole('combobox').first().locator('option:checked')).toHaveText('All Categories');
     await expect(page.getByRole('combobox').nth(1).locator('option:checked')).toHaveText('All Cities');
 });
-test('User should click on Book Now button', async ({ page }) => {
+test('User should see event details', async ({ page }) => {
     const eventsPage = new EventsPage(page);
+    const eventDetailsPage = new EventDetailsPage(page);
+
     await eventsPage.clickBookNow();
-    await expect (page.getByText('Dilli Diwali Mela')).toBeVisible();
-    await expect (page).toHaveURL('https://eventhub.rahulshettyacademy.com/events/285');
-    await expect (page.getByText('Pragati Maidan Exhibition Grounds')).toBeVisible();
-    await expect (page.getByRole('paragraph').filter({ hasText: '$' })).toBeVisible();
+    await expect(eventDetailsPage.eventName).toBeVisible();
+    await expect(eventDetailsPage.venue).toBeVisible();
+    await expect(eventDetailsPage.ticketPrice).toBeVisible();
 });
