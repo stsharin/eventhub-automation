@@ -8,8 +8,4 @@ export class NavBar {
         this.page = page;
         this.logoutButton = page.getByRole('button', { name: 'Logout' });
     }
-
-    loggedInUser(email: string): Locator {
-        return this.page.getByRole('navigation').getByText(email, { exact: true });
-    }
 }

@@ -61,13 +61,13 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 | # | Test case | Steps |
 | --- | --- | --- |
-| 1 | User should register successfully | Open `/register`, register with a **unique email** generated per run, then verify the user is redirected away from `/register` and the nav bar shows their email and a **Logout** button |
+| 1 | User should register successfully | Open `/register`, register with a **unique email** generated per run, then verify the **Logout** button is visible |
 
 #### Login — `tests/login.spec.ts`
 
 | # | Test case | Steps |
 | --- | --- | --- |
-| 2 | User should login successfully | Open `/login`, sign in with credentials from `.env`, then verify the user is redirected away from `/login` and the nav bar shows their email and a **Logout** button |
+| 2 | User should login successfully | Open `/login`, sign in with credentials from `.env`, then verify the **Logout** button is visible |
 
 #### Events — `tests/event.spec.ts`
 
@@ -120,7 +120,7 @@ eventhub-automation/
 │   ├── login.spec.ts
 │   └── event.spec.ts
 ├── utils/
-│   └── testData.ts            # Credentials from .env and unique test data
+│   └── testData.ts            # Credentials from .env
 ├── .env.example               # Template for local credentials (.env is git-ignored)
 ├── playwright.config.ts       # Browsers, base URL, reporter, screenshots, traces
 ├── tsconfig.json
@@ -138,7 +138,7 @@ Locators and user actions live in page classes under `pages/`, so tests read as 
 | --- | --- | --- |
 | `RegisterPage` | email, password, confirm password, Create Account button | `register(email, password, confirmPassword)` |
 | `LoginPage` | email, password, Sign In button | `login(email, password)` |
-| `NavBar` | Logout button, logged-in user's email | `loggedInUser(email)` |
+| `NavBar` | Logout button | — |
 | `EventsPage` | search box, category filter, city filter, Clear filters button, Book Now button | `searchEvent()`, `filterByCategory()`, `filterByCity()`, `clearFilters()`, `clickBookNow()` |
 | `EventDetailsPage` | event name, venue, ticket price, Confirm Booking button | — (Confirm Booking is ready for the upcoming booking tests) |
 

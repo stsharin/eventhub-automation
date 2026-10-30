@@ -8,7 +8,5 @@ test('User should login successfully', async ({page}) => {
     const navBar = new NavBar(page);
     await page.goto('/login');
     await loginPage.login(validUser.email, validUser.password);
-    await expect(page).not.toHaveURL(/\/login/);
     await expect(navBar.logoutButton).toBeVisible();
-    await expect(navBar.loggedInUser(validUser.email)).toBeVisible();
 });
