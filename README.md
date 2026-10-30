@@ -88,13 +88,12 @@ Every test in this file starts from a shared `beforeEach` hook: log in → verif
 
 ## Bugs Found
 
-Exploratory testing alongside the automation surfaced the following defects. Each one was reproduced on the live site and documented with steps, expected vs actual results, API evidence and screenshots in **[docs/BUG_REPORTS.md](docs/BUG_REPORTS.md)**.
+Exploratory testing alongside the automation surfaced the following defects. Each one was reproduced on the live site and written up with steps to reproduce, expected and actual results, and a marked screenshot in **[docs/BUG_REPORTS.md](docs/BUG_REPORTS.md)**.
 
-| ID | Bug | Severity |
-| --- | --- | --- |
-| [BUG-001](docs/BUG_REPORTS.md#bug-001) | Past events listed under "Upcoming Events" with no year or "past" indicator | Low |
-| [BUG-002](docs/BUG_REPORTS.md#bug-002) | Event has inconsistent location data and its city is missing from the City filter | Medium |
-| [BUG-003](docs/BUG_REPORTS.md#bug-003) | `/favicon.ico` returns 404 on every page load | Low |
+| ID | Bug | Severity | Priority |
+| --- | --- | --- | --- |
+| BUG-001 | Past events are listed under "Upcoming Events" | Medium | Medium |
+| BUG-002 | Hollywood Monsoon Night has mixed-up location and can't be found with the City filter | Medium | Medium |
 
 New bugs can be logged with the repository's GitHub **Bug report** issue template.
 

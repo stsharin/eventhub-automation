@@ -1,28 +1,25 @@
 ---
 name: Bug report
 about: Report a defect found in EventHub
-title: "[BUG] "
+title: ""
 labels: bug
 assignees: ''
 ---
 
-**Severity:** Critical / High / Medium / Low
-**Priority:** High / Medium / Low
-**Component:**
+<!-- Describe the bug in one or two sentences. -->
 
-**Environment:** browser, OS, test date
+**Severity:** · **Priority:**
 
 **Preconditions:**
 
-**Steps to reproduce:**
+**Steps to Reproduce:**
+
 1.
 2.
 3.
 
-**Expected result:**
+**Expected Result:**
 
-**Actual result:**
+**Actual Result:**
 
-**Evidence:** screenshot, console log, or Playwright trace
-
-**Related test:** `tests/<file>.spec.ts` › "<test name>"
+<!-- Attach a screenshot with the issue marked in red. -->
