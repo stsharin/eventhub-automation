@@ -14,6 +14,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 - [Tech Stack](#tech-stack)
 - [Test Coverage](#test-coverage)
+- [Bugs Found](#bugs-found)
 - [Project Structure](#project-structure)
 - [Page Objects](#page-objects)
 - [Getting Started](#getting-started)
@@ -60,17 +61,17 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 | # | Test case | Steps |
 | --- | --- | --- |
-| 1 | User should register successfully | Open `/register`, fill email, password and confirm password, click **Create Account** |
+| 1 | User should register successfully | Open `/register`, register with a **unique email** generated per run, then verify the user is redirected away from `/register` and the nav bar shows their email and a **Logout** button |
 
 #### Login — `tests/login.spec.ts`
 
 | # | Test case | Steps |
 | --- | --- | --- |
-| 2 | User should login successfully | Open the home page, enter valid credentials, click **Sign In** |
+| 2 | User should login successfully | Open `/login`, sign in with credentials from `.env`, then verify the user is redirected away from `/login` and the nav bar shows their email and a **Logout** button |
 
 #### Events — `tests/event.spec.ts`
 
-Every test in this file starts from a shared `beforeEach` hook: log in → click **Browse Events →** → verify the URL contains `/events`.
+Every test in this file starts from a shared `beforeEach` hook: log in → verify the **Logout** button is visible → click **Browse Events →** → verify the URL contains `/events`.
 
 | # | Test case | Type | What it verifies |
 | --- | --- | --- | --- |
@@ -85,19 +86,43 @@ Every test in this file starts from a shared `beforeEach` hook: log in → click
 
 ---
 
+## Bugs Found
+
+Exploratory testing alongside the automation surfaced the following defects. Each one was reproduced on the live site and documented with steps, expected vs actual results, API evidence and screenshots in **[docs/BUG_REPORTS.md](docs/BUG_REPORTS.md)**.
+
+| ID | Bug | Severity |
+| --- | --- | --- |
+| [BUG-001](docs/BUG_REPORTS.md#bug-001) | Past events listed under "Upcoming Events" with no year or "past" indicator | Low |
+| [BUG-002](docs/BUG_REPORTS.md#bug-002) | Event has inconsistent location data and its city is missing from the City filter | Medium |
+| [BUG-003](docs/BUG_REPORTS.md#bug-003) | `/favicon.ico` returns 404 on every page load | Low |
+
+New bugs can be logged with the repository's GitHub **Bug report** issue template.
+
+---
+
 ## Project Structure
 
 ```text
 eventhub-automation/
+├── .github/
+│   └── ISSUE_TEMPLATE/
+│       └── bug_report.md      # GitHub issue template for bug reports
+├── docs/
+│   ├── BUG_REPORTS.md         # Documented defects with evidence
+│   └── screenshots/           # Screenshots referenced by the bug reports
 ├── pages/                     # Page Object Model classes
 │   ├── RegisterPage.ts
 │   ├── LoginPage.ts
+│   ├── NavBar.ts
 │   ├── EventsPage.ts
 │   └── EventDetailsPage.ts
 ├── tests/                     # Test specs
 │   ├── register.spec.ts
 │   ├── login.spec.ts
 │   └── event.spec.ts
+├── utils/
+│   └── testData.ts            # Credentials from .env and unique test data
+├── .env.example               # Template for local credentials (.env is git-ignored)
 ├── playwright.config.ts       # Browsers, base URL, reporter, screenshots, traces
 ├── tsconfig.json
 ├── package.json
@@ -114,6 +139,7 @@ Locators and user actions live in page classes under `pages/`, so tests read as 
 | --- | --- | --- |
 | `RegisterPage` | email, password, confirm password, Create Account button | `register(email, password, confirmPassword)` |
 | `LoginPage` | email, password, Sign In button | `login(email, password)` |
+| `NavBar` | Logout button, logged-in user's email | `loggedInUser(email)` |
 | `EventsPage` | search box, category filter, city filter, Clear filters button, Book Now button | `searchEvent()`, `filterByCategory()`, `filterByCity()`, `clearFilters()`, `clickBookNow()` |
 | `EventDetailsPage` | event name, venue, ticket price, Confirm Booking button | — (Confirm Booking is ready for the upcoming booking tests) |
 
@@ -138,6 +164,23 @@ npx playwright install
 ```
 
 > `npx playwright install` downloads the browser builds that match the installed Playwright version. Re-run it whenever you update `@playwright/test`.
+
+### Credentials
+
+The login and event tests need an existing EventHub account. Credentials are read from environment variables and are never committed:
+
+```bash
+cp .env.example .env
+```
+
+Then set your own account in `.env`:
+
+```text
+EVENTHUB_EMAIL=your-email@example.com
+EVENTHUB_PASSWORD=your-password
+```
+
+On CI, set `EVENTHUB_EMAIL` and `EVENTHUB_PASSWORD` as secrets instead. Variables already set in the environment take precedence over `.env`.
 
 ---
 
@@ -173,7 +216,8 @@ Key settings in `playwright.config.ts`:
 
 | Setting | Value |
 | --- | --- |
-| Base URL | `https://eventhub.rahulshettyacademy.com` |
+| Base URL | `https://eventhub.rahulshettyacademy.com` (tests navigate with relative paths) |
+| Credentials | Loaded from `.env` via `dotenv` |
 | Browsers | Chromium, Firefox, WebKit |
 | Mode | Headless |
 | Parallel execution | Fully parallel (1 worker on CI) |
@@ -195,16 +239,17 @@ Key settings in `playwright.config.ts`:
 - [x] Clear filters
 - [x] Event details
 - [ ] Event booking (Confirm Booking flow)
-- [ ] Assertions for successful login and registration outcomes
+- [x] Assertions for successful login and registration outcomes
 - [ ] Negative login and registration scenarios (invalid credentials, validation messages)
 
 ### Framework Improvements
 
 - [x] Page Object Model
-- [ ] Use `baseURL` with relative paths in `page.goto()`
+- [x] Use `baseURL` with relative paths in `page.goto()`
 - [ ] Test fixtures for page objects and logged-in state
-- [ ] Test data management (unique test users, external test data)
-- [ ] Credentials via environment variables (`.env`)
+- [x] Unique test users for registration
+- [ ] External test data files
+- [x] Credentials via environment variables (`.env`)
 - [ ] npm scripts for common test commands
 
 ### API & CI/CD

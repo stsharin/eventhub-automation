@@ -1,8 +1,14 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from '../pages/LoginPage';
+import {NavBar} from '../pages/NavBar';
+import {validUser} from '../utils/testData';
 
 test('User should login successfully', async ({page}) => {
     const loginPage = new LoginPage(page);
-    await page.goto('https://eventhub.rahulshettyacademy.com');
-    await loginPage.login('sharin@gmail.com', 'kkkkkkkkA1@');
+    const navBar = new NavBar(page);
+    await page.goto('/login');
+    await loginPage.login(validUser.email, validUser.password);
+    await expect(page).not.toHaveURL(/\/login/);
+    await expect(navBar.logoutButton).toBeVisible();
+    await expect(navBar.loggedInUser(validUser.email)).toBeVisible();
 });

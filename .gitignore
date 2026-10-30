@@ -6,3 +6,10 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+# Local credentials
+.env
+
+# MCP / AI tooling
+.mcp.json
+.playwright-mcp/
+

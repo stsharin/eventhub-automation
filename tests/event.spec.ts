@@ -2,12 +2,14 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { EventsPage } from '../pages/EventsPage';
 import { EventDetailsPage } from '../pages/EventDetailsPage';
+import { NavBar } from '../pages/NavBar';
+import { validUser } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
-    const eventsPage = new EventsPage(page);
-    await page.goto('https://eventhub.rahulshettyacademy.com');
-    await loginPage.login('sharin@gmail.com', 'kkkkkkkkA1@');
-    await expect(page).toHaveURL(/login/);
+    const navBar = new NavBar(page);
+    await page.goto('/login');
+    await loginPage.login(validUser.email, validUser.password);
+    await expect(navBar.logoutButton).toBeVisible();
     await page.getByRole('link', { name: 'Browse Events →' }).click();
     await expect(page).toHaveURL(/events/);
 });
