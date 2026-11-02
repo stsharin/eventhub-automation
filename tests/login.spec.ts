@@ -10,3 +10,25 @@ test('User should login successfully', async ({page}) => {
     await loginPage.login(validUser.email, validUser.password);
     await expect(navBar.logoutButton).toBeVisible();
 });
+
+test('User should see error with wrong password', async ({page}) => {
+    const loginPage = new LoginPage(page);
+    await page.goto('/login');
+    await loginPage.login(validUser.email, 'wrongPass1!');
+    await expect(page.getByText('Invalid email or password')).toBeVisible();
+});
+
+test('User should see error with unregistered email', async ({page}) => {
+    const loginPage = new LoginPage(page);
+    await page.goto('/login');
+    await loginPage.login('notregistered12345@example.com', 'passworD123#');
+    await expect(page.getByText('Invalid email or password')).toBeVisible();
+});
+
+test('User should see errors when fields are empty', async ({page}) => {
+    const loginPage = new LoginPage(page);
+    await page.goto('/login');
+    await loginPage.login('', '');
+    await expect(page.getByText('Enter a valid email')).toBeVisible();
+    await expect(page.getByText('Password must be at least 6 characters')).toBeVisible();
+});

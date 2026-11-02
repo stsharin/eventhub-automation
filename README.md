@@ -39,14 +39,14 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 ## Test Coverage
 
-**10 test cases** across 3 spec files, each executed on **Chromium, Firefox and WebKit** (30 runs in total).
+**17 test cases** across 3 spec files, each executed on **Chromium, Firefox and WebKit** (51 runs in total).
 
 ### Summary
 
 | Feature | Spec file | Tests | Status |
 | --- | --- | :---: | --- |
-| User Registration | `register.spec.ts` | 1 | ✅ Automated |
-| User Login | `login.spec.ts` | 1 | ✅ Automated |
+| User Registration | `register.spec.ts` | 5 | ✅ Automated |
+| User Login | `login.spec.ts` | 4 | ✅ Automated |
 | Event Search | `event.spec.ts` | 2 | ✅ Automated |
 | Event Filtering | `event.spec.ts` | 4 | ✅ Automated |
 | Clear Filters | `event.spec.ts` | 1 | ✅ Automated |
@@ -62,12 +62,19 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 | # | Test case | Steps |
 | --- | --- | --- |
 | 1 | User should register successfully | Open `/register`, register with a **unique email** generated per run, then verify the **Logout** button is visible |
+| 2 | User should see error with invalid email | Register with email `abc`, then verify *Enter a valid email* is shown |
+| 3 | User should see error with weak password | Register with password `abc123`, then verify *Password does not meet the requirements below* is shown |
+| 4 | User should see error when passwords do not match | Register with different password and confirm password, then verify *Passwords do not match* is shown |
+| 5 | User should see error when email is already registered | Register with the email from `.env`, then verify *Email already registered* is shown |
 
 #### Login — `tests/login.spec.ts`
 
 | # | Test case | Steps |
 | --- | --- | --- |
-| 2 | User should login successfully | Open `/login`, sign in with credentials from `.env`, then verify the **Logout** button is visible |
+| 6 | User should login successfully | Open `/login`, sign in with credentials from `.env`, then verify the **Logout** button is visible |
+| 7 | User should see error with wrong password | Sign in with a wrong password, then verify *Invalid email or password* is shown |
+| 8 | User should see error with unregistered email | Sign in with an email that has no account, then verify *Invalid email or password* is shown |
+| 9 | User should see errors when fields are empty | Click **Sign In** with empty fields, then verify *Enter a valid email* and *Password must be at least 6 characters* are shown |
 
 #### Events — `tests/event.spec.ts`
 
@@ -75,14 +82,14 @@ Every test in this file starts from a shared `beforeEach` hook: log in → verif
 
 | # | Test case | Type | What it verifies |
 | --- | --- | --- | --- |
-| 3 | User should see matching events | Positive | Searching `music` shows *Hollywood Monsoon Night — Los Angeles* |
-| 4 | User should see no events found | Negative | Searching `xyz` shows *No events found* |
-| 5 | User should filter events by category | Positive | Category `Conference` shows *World Tech Summit* |
-| 6 | User should filter events by city | Positive | City `Delhi` shows *Dilli Diwali Mela* |
-| 7 | Should show no events when the selected city has no matches | Negative | City `Pune` shows *No events found* |
-| 8 | User should filter events by category and city | Positive | `Festival` + `Delhi` together show *Dilli Diwali Mela* |
-| 9 | User should clear filters | Positive | After **Clear filters**, dropdowns reset to *All Categories* and *All Cities* |
-| 10 | User should see event details | Positive | **Book Now** on *Dilli Diwali Mela* opens its details page showing the event name, venue (*Pragati Maidan Exhibition Grounds*) and ticket price |
+| 10 | User should see matching events | Positive | Searching `music` shows *Hollywood Monsoon Night — Los Angeles* |
+| 11 | User should see no events found | Negative | Searching `xyz` shows *No events found* |
+| 12 | User should filter events by category | Positive | Category `Conference` shows *World Tech Summit* |
+| 13 | User should filter events by city | Positive | City `Delhi` shows *Dilli Diwali Mela* |
+| 14 | Should show no events when the selected city has no matches | Negative | City `Pune` shows *No events found* |
+| 15 | User should filter events by category and city | Positive | `Festival` + `Delhi` together show *Dilli Diwali Mela* |
+| 16 | User should clear filters | Positive | After **Clear filters**, dropdowns reset to *All Categories* and *All Cities* |
+| 17 | User should see event details | Positive | **Book Now** on *Dilli Diwali Mela* opens its details page showing the event name, venue (*Pragati Maidan Exhibition Grounds*) and ticket price |
 
 ---
 
@@ -239,7 +246,7 @@ Key settings in `playwright.config.ts`:
 - [x] Event details
 - [ ] Event booking (Confirm Booking flow)
 - [x] Assertions for successful login and registration outcomes
-- [ ] Negative login and registration scenarios (invalid credentials, validation messages)
+- [x] Negative login and registration scenarios (invalid credentials, validation messages)
 
 ### Framework Improvements
 
