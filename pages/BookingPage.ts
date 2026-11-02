@@ -9,6 +9,8 @@ export class BookingPage {
     readonly phoneInput: Locator;
     readonly confirmBookingButton: Locator;
     readonly bookingConfirmedMessage: Locator;
+    readonly bookingRef: Locator;
+    readonly viewMyBookingsButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -19,6 +21,8 @@ export class BookingPage {
         this.phoneInput = page.getByRole('textbox', { name: 'Phone Number' });
         this.confirmBookingButton = page.getByRole('button', { name: 'Confirm Booking' });
         this.bookingConfirmedMessage = page.getByRole('heading', { name: 'Booking Confirmed!' });
+        this.bookingRef = page.getByText(/^[A-Z]-[A-Z0-9]{6}$/);
+        this.viewMyBookingsButton = page.getByRole('button', { name: 'View My Bookings' });
     }
 
     async increaseTickets() {
@@ -30,5 +34,9 @@ export class BookingPage {
         await this.emailInput.fill(email);
         await this.phoneInput.fill(phone);
         await this.confirmBookingButton.click();
+    }
+
+    async goToMyBookings() {
+        await this.viewMyBookingsButton.click();
     }
 }

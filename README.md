@@ -39,7 +39,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 ## Test Coverage
 
-**17 test cases** across 3 spec files, each executed on **Chromium, Firefox and WebKit** (51 runs in total).
+**22 test cases** across 4 spec files, each executed on **Chromium, Firefox and WebKit** (66 runs in total).
 
 ### Summary
 
@@ -51,7 +51,8 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 | Event Filtering | `event.spec.ts` | 4 | ✅ Automated |
 | Clear Filters | `event.spec.ts` | 1 | ✅ Automated |
 | Event Details | `event.spec.ts` | 1 | ✅ Automated |
-| Event Booking | — | — | 🔄 Planned |
+| Event Booking | `booking.spec.ts` | 4 | ✅ Automated |
+| My Bookings (view details, go back, cancel) | `booking.spec.ts` | 1 | ✅ Automated |
 | API Testing | — | — | 🔄 Planned |
 | CI/CD | — | — | 🔄 Planned |
 
@@ -91,6 +92,20 @@ Every test in this file starts from a shared `beforeEach` hook: log in → verif
 | 16 | User should clear filters | Positive | After **Clear filters**, dropdowns reset to *All Categories* and *All Cities* |
 | 17 | User should see event details | Positive | **Book Now** on *Dilli Diwali Mela* opens its details page showing the event name, venue (*Pragati Maidan Exhibition Grounds*) and ticket price |
 
+#### Booking — `tests/booking.spec.ts`
+
+Every test in this file starts from a shared `beforeEach` hook: log in → verify the **Logout** button is visible → click **Browse Events →** → click **Book Now** on *Dilli Diwali Mela*.
+
+| # | Test case | Type | What it verifies |
+| --- | --- | --- | --- |
+| 18 | User should book 1 ticket successfully | Positive | Booking with valid name, email and phone shows *Booking Confirmed!* and *Your tickets are reserved.* |
+| 19 | User should book 2 tickets successfully | Positive | Clicking **+** shows *$300 × 2 tickets*, then the booking shows *Booking Confirmed!* |
+| 20 | User should see errors when booking form is empty | Negative | **Confirm Booking** with empty fields shows *Name must be at least 2 chars*, *Enter a valid email* and *Enter a valid 10-digit phone* |
+| 21 | User should see error with invalid phone number | Negative | Phone `12345` shows *Enter a valid 10-digit phone* |
+| 22 | User should book, view details, go back and cancel booking | End-to-end | Books a ticket and saves the booking reference → **View My Bookings** shows the booking → **View Details** shows the customer name and phone → **← Back to My Bookings** returns to `/bookings` → **Cancel Booking** + **Yes, cancel it** removes the booking |
+
+> The booking tests create real bookings on the test account (test 22 cancels its own booking). Use **Clear all bookings** on the My Bookings page now and then to keep the test data clean.
+
 ---
 
 ## Bugs Found
@@ -101,6 +116,8 @@ Exploratory testing alongside the automation surfaced the following defects. Eac
 | --- | --- | --- | --- |
 | BUG-001 | Past events are listed under "Upcoming Events" | Medium | Medium |
 | BUG-002 | Hollywood Monsoon Night has mixed-up location and can't be found with the City filter | Medium | Medium |
+| BUG-003 | Booking form accepts phone numbers longer than 10 digits | Medium | Medium |
+| BUG-004 | Available seats don't update after booking | Low | Low |
 
 New bugs can be logged with the repository's GitHub **Bug report** issue template.
 
@@ -121,11 +138,15 @@ eventhub-automation/
 │   ├── LoginPage.ts
 │   ├── NavBar.ts
 │   ├── EventsPage.ts
-│   └── EventDetailsPage.ts
+│   ├── EventDetailsPage.ts
+│   ├── BookingPage.ts
+│   ├── MyBookingsPage.ts
+│   └── BookingDetailsPage.ts
 ├── tests/                     # Test specs
 │   ├── register.spec.ts
 │   ├── login.spec.ts
-│   └── event.spec.ts
+│   ├── event.spec.ts
+│   └── booking.spec.ts
 ├── utils/
 │   └── testData.ts            # Credentials from .env
 ├── .env.example               # Template for local credentials (.env is git-ignored)
@@ -147,7 +168,10 @@ Locators and user actions live in page classes under `pages/`, so tests read as 
 | `LoginPage` | email, password, Sign In button | `login(email, password)` |
 | `NavBar` | Logout button | — |
 | `EventsPage` | search box, category filter, city filter, Clear filters button, Book Now button | `searchEvent()`, `filterByCategory()`, `filterByCity()`, `clearFilters()`, `clickBookNow()` |
-| `EventDetailsPage` | event name, venue, ticket price, Confirm Booking button | — (Confirm Booking is ready for the upcoming booking tests) |
+| `EventDetailsPage` | event name, venue, ticket price | — |
+| `BookingPage` | + / − ticket buttons, full name, email, phone, Confirm Booking button, *Booking Confirmed!* message, booking reference, View My Bookings button | `increaseTickets()`, `bookTicket(fullName, email, phone)`, `goToMyBookings()` |
+| `MyBookingsPage` | booking cards, *Yes, cancel it* button | `viewBookingDetails(bookingRef)`, `cancelBooking(bookingRef)` |
+| `BookingDetailsPage` | ← Back to My Bookings button | `goBackToMyBookings()` |
 
 Locators prefer user-facing queries (`getByRole`, `getByText`) and `data-testid` attributes (`getByTestId`) over CSS/XPath.
 
@@ -173,7 +197,7 @@ npx playwright install
 
 ### Credentials
 
-The login and event tests need an existing EventHub account. Credentials are read from environment variables and are never committed:
+The login, event and booking tests need an existing EventHub account. Credentials are read from environment variables and are never committed:
 
 ```bash
 cp .env.example .env
@@ -244,7 +268,8 @@ Key settings in `playwright.config.ts`:
 - [x] Event filtering by category, city and both
 - [x] Clear filters
 - [x] Event details
-- [ ] Event booking (Confirm Booking flow)
+- [x] Event booking (Confirm Booking flow)
+- [x] My Bookings: view booking details, go back and cancel booking
 - [x] Assertions for successful login and registration outcomes
 - [x] Negative login and registration scenarios (invalid credentials, validation messages)
 

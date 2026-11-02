@@ -45,3 +45,50 @@ The event title and city say Los Angeles, but the venue is NSCI SVP Stadium, Wor
 **Actual Result:** The title and city say Los Angeles, while the venue (Worli) and description say Mumbai. Los Angeles is missing from the City filter, and selecting Mumbai shows "No events found". Opening `/events?city=Los Angeles` does show the event, but the City filter still says "All Cities".
 
 ![Event details location mismatch](screenshots/BUG-002-event-details-city-mismatch.png)
+
+---
+
+## BUG-003: Booking form accepts phone numbers longer than 10 digits
+
+The booking form says "Enter a valid 10-digit phone", but it accepts phone numbers with more than 10 digits. Bookings with an 11-digit and a 15-digit phone number were both confirmed, and the full number is saved on the booking.
+
+**Severity:** Medium · **Priority:** Medium
+
+**Preconditions:** User is logged in to EventHub.
+
+**Steps to Reproduce:**
+
+1. Go to Events and click Book Now on Hollywood Monsoon Night — Los Angeles.
+2. Enter Full Name "Phone Test", a valid email and Phone Number "123456789012345" (15 digits).
+3. Click Confirm Booking.
+4. Click View My Bookings and open View Details on the new booking.
+
+**Expected Result:** The error "Enter a valid 10-digit phone" is shown and the booking is not created.
+
+**Actual Result:** No error is shown, the booking is confirmed, and the booking details show the phone as "123456789012345".
+
+![Phone with 15 digits saved on booking](screenshots/BUG-003-phone-more-than-10-digits.png)
+
+---
+
+## BUG-004: Available seats don't update after booking
+
+After a booking is confirmed, the "Available" seat count on the event page stays the same. The correct, lower number only shows after the page is reloaded.
+
+**Severity:** Low · **Priority:** Low
+
+**Preconditions:** User is logged in to EventHub.
+
+**Steps to Reproduce:**
+
+1. Go to Events and click Book Now on Hollywood Monsoon Night — Los Angeles.
+2. Note the Available seats (for example "2658 / 3000 seats").
+3. Book 1 ticket with valid details and click Confirm Booking.
+4. Look at the Available seats again.
+5. Reload the page.
+
+**Expected Result:** After the booking is confirmed, Available shows one seat less ("2657 / 3000 seats").
+
+**Actual Result:** Available still shows "2658 / 3000 seats" after the booking is confirmed. It only changes to "2657 / 3000 seats" after reloading the page.
+
+![Seats not updated after booking](screenshots/BUG-004-seats-not-updated-after-booking.png)

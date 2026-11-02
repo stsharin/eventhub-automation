@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { EventsPage } from '../pages/EventsPage';
 import { BookingPage } from '../pages/BookingPage';
+import { MyBookingsPage } from '../pages/MyBookingsPage';
+import { BookingDetailsPage } from '../pages/BookingDetailsPage';
 import { NavBar } from '../pages/NavBar';
 import { validUser } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
@@ -39,4 +41,28 @@ test('User should see error with invalid phone number', async ({ page }) => {
     const bookingPage = new BookingPage(page);
     await bookingPage.bookTicket('Sharin Test', validUser.email, '12345');
     await expect(page.getByText('Enter a valid 10-digit phone')).toBeVisible();
+});
+test('User should book, view details, go back and cancel booking', async ({ page }) => {
+    const bookingPage = new BookingPage(page);
+    const myBookingsPage = new MyBookingsPage(page);
+    const bookingDetailsPage = new BookingDetailsPage(page);
+
+    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
+    const bookingRef = await bookingPage.bookingRef.innerText();
+
+    await bookingPage.goToMyBookings();
+    await expect(page).toHaveURL(/bookings/);
+    await expect(page.getByText(bookingRef)).toBeVisible();
+
+    await myBookingsPage.viewBookingDetails(bookingRef);
+    await expect(page).toHaveURL(/bookings\//);
+    await expect(page.getByText('Sharin Test')).toBeVisible();
+    await expect(page.getByText('9876543210')).toBeVisible();
+
+    await bookingDetailsPage.goBackToMyBookings();
+    await expect(page).toHaveURL(/bookings$/);
+
+    await myBookingsPage.cancelBooking(bookingRef);
+    await expect(myBookingsPage.bookingCards.filter({ hasText: bookingRef })).not.toBeVisible();
 });
