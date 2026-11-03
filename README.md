@@ -39,7 +39,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 ## Test Coverage
 
-**22 test cases** across 4 spec files, each executed on **Chromium, Firefox and WebKit** (66 runs in total).
+**25 test cases** across 5 spec files, each executed on **Chromium, Firefox and WebKit** (75 runs in total).
 
 ### Summary
 
@@ -53,6 +53,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 | Event Details | `event.spec.ts` | 1 | ✅ Automated |
 | Event Booking | `booking.spec.ts` | 4 | ✅ Automated |
 | My Bookings (view details, go back, cancel) | `booking.spec.ts` | 1 | ✅ Automated |
+| Admin – Manage Events (add, edit, delete) | `admin.spec.ts` | 3 | ✅ Automated |
 | API Testing | — | — | 🔄 Planned |
 | CI/CD | — | — | 🔄 Planned |
 
@@ -106,6 +107,18 @@ Every test in this file starts from a shared `beforeEach` hook: log in → verif
 
 > The booking tests create real bookings on the test account (test 22 cancels its own booking). Use **Clear all bookings** on the My Bookings page now and then to keep the test data clean.
 
+#### Admin – Manage Events — `tests/admin.spec.ts`
+
+Every test in this file starts from a shared `beforeEach` hook: log in → verify the **Logout** button is visible → open `/admin/events`.
+
+| # | Test case | Type | What it verifies |
+| --- | --- | --- | --- |
+| 23 | User should see errors when add event form is empty | Negative | **+ Add Event** with empty fields shows *Title is required*, *City is required*, *Venue is required*, *Event date is required*, *Enter a valid price (≥ 0)* and *Must have at least 1 seat* |
+| 24 | Featured events should be read-only | Positive | The *Dilli Diwali Mela* row shows *Read-only* instead of Edit and Delete buttons |
+| 25 | User should add, edit and delete an event | End-to-end | Adds an event with a unique title and checks the price *$100* in the table → the event shows on the Events page → **Edit** the price to *$150* and checks the table → **Delete** + **Delete event** removes it |
+
+> Test 25 deletes its own event. Each user can add up to 6 events — when the limit is reached, the oldest event is replaced automatically.
+
 ---
 
 ## Bugs Found
@@ -141,12 +154,14 @@ eventhub-automation/
 │   ├── EventDetailsPage.ts
 │   ├── BookingPage.ts
 │   ├── MyBookingsPage.ts
-│   └── BookingDetailsPage.ts
+│   ├── BookingDetailsPage.ts
+│   └── AdminEventsPage.ts
 ├── tests/                     # Test specs
 │   ├── register.spec.ts
 │   ├── login.spec.ts
 │   ├── event.spec.ts
-│   └── booking.spec.ts
+│   ├── booking.spec.ts
+│   └── admin.spec.ts
 ├── utils/
 │   └── testData.ts            # Credentials from .env
 ├── .env.example               # Template for local credentials (.env is git-ignored)
@@ -172,6 +187,7 @@ Locators and user actions live in page classes under `pages/`, so tests read as 
 | `BookingPage` | + / − ticket buttons, full name, email, phone, Confirm Booking button, *Booking Confirmed!* message, booking reference, View My Bookings button | `increaseTickets()`, `bookTicket(fullName, email, phone)`, `goToMyBookings()` |
 | `MyBookingsPage` | booking cards, *Yes, cancel it* button | `viewBookingDetails(bookingRef)`, `cancelBooking(bookingRef)` |
 | `BookingDetailsPage` | ← Back to My Bookings button | `goBackToMyBookings()` |
+| `AdminEventsPage` | title, description, category, city, venue, event date & time, price, total seats, + Add Event button, Delete event confirm button | `addEvent(title, description, category, city, venue, date, price, seats)`, `editPrice(title, newPrice)`, `deleteEvent(title)` |
 
 Locators prefer user-facing queries (`getByRole`, `getByText`) and `data-testid` attributes (`getByTestId`) over CSS/XPath.
 
@@ -197,7 +213,7 @@ npx playwright install
 
 ### Credentials
 
-The login, event and booking tests need an existing EventHub account. Credentials are read from environment variables and are never committed:
+The login, event, booking and admin tests need an existing EventHub account. Credentials are read from environment variables and are never committed:
 
 ```bash
 cp .env.example .env
@@ -270,6 +286,8 @@ Key settings in `playwright.config.ts`:
 - [x] Event details
 - [x] Event booking (Confirm Booking flow)
 - [x] My Bookings: view booking details, go back and cancel booking
+- [x] Admin – Manage Events: add, edit and delete events
+- [ ] Admin – Manage Bookings
 - [x] Assertions for successful login and registration outcomes
 - [x] Negative login and registration scenarios (invalid credentials, validation messages)
 
