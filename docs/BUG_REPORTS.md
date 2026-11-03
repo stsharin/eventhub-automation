@@ -92,3 +92,26 @@ After a booking is confirmed, the "Available" seat count on the event page stays
 **Actual Result:** Available still shows "2658 / 3000 seats" after the booking is confirmed. It only changes to "2657 / 3000 seats" after reloading the page.
 
 ![Seats not updated after booking](screenshots/BUG-004-seats-not-updated-after-booking.png)
+
+---
+
+## BUG-005: Cancelled bookings disappear instead of showing in the "Cancelled" filter
+
+Manage Bookings has a status filter with "Cancelled", but cancelled bookings are removed from the list completely instead of getting the status "cancelled". Because of this, the Cancelled filter always shows "No bookings found".
+
+**Severity:** Medium · **Priority:** Medium
+
+**Preconditions:** User is logged in to EventHub and has at least one confirmed booking.
+
+**Steps to Reproduce:**
+
+1. Book 1 ticket for Dilli Diwali Mela.
+2. Go to Admin > Manage Bookings and find the new booking (status "confirmed").
+3. Click Cancel on the booking and then click "Yes, cancel it".
+4. Select "Cancelled" in the status filter.
+
+**Expected Result:** The cancelled booking stays in the list with status "cancelled" and is shown when the "Cancelled" filter is selected.
+
+**Actual Result:** The booking disappears from the list (total bookings go from 9 to 8), and the "Cancelled" filter shows "0 total bookings" and "No bookings found".
+
+![Cancelled filter shows no bookings](screenshots/BUG-005-cancelled-filter-empty.png)

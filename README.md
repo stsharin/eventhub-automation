@@ -39,7 +39,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 
 ## Test Coverage
 
-**25 test cases** across 5 spec files, each executed on **Chromium, Firefox and WebKit** (75 runs in total).
+**27 test cases** across 6 spec files, each executed on **Chromium, Firefox and WebKit** (81 runs in total).
 
 ### Summary
 
@@ -54,6 +54,7 @@ End-to-end UI test automation for the **EventHub** QA practice application, buil
 | Event Booking | `booking.spec.ts` | 4 | ✅ Automated |
 | My Bookings (view details, go back, cancel) | `booking.spec.ts` | 1 | ✅ Automated |
 | Admin – Manage Events (add, edit, delete) | `admin.spec.ts` | 3 | ✅ Automated |
+| Admin – Manage Bookings (view, cancel, status filter) | `adminBookings.spec.ts` | 2 | ✅ Automated |
 | API Testing | — | — | 🔄 Planned |
 | CI/CD | — | — | 🔄 Planned |
 
@@ -119,6 +120,15 @@ Every test in this file starts from a shared `beforeEach` hook: log in → verif
 
 > Test 25 deletes its own event. Each user can add up to 6 events — when the limit is reached, the oldest event is replaced automatically.
 
+#### Admin – Manage Bookings — `tests/adminBookings.spec.ts`
+
+Every test in this file starts from a shared `beforeEach` hook: log in → verify the **Logout** button is visible. Each test then books 1 ticket for *Dilli Diwali Mela* and opens `/admin/bookings`.
+
+| # | Test case | Type | What it verifies |
+| --- | --- | --- | --- |
+| 26 | User should view, keep and cancel a booking in Manage Bookings | End-to-end | The new booking shows as *confirmed* → **View** opens a dialog with the booking reference, customer name and phone → **Close** closes it → **Cancel** + dialog **Cancel** keeps the booking *confirmed* → **Cancel** + **Yes, cancel it** removes it |
+| 27 | Cancelled booking should show in the Cancelled filter | Known bug | Marked with `test.fail()` for **BUG-005** — after cancelling, the booking should appear under the *Cancelled* filter, but it disappears. If the bug is fixed, this test will be reported so it can be updated |
+
 ---
 
 ## Bugs Found
@@ -131,6 +141,7 @@ Exploratory testing alongside the automation surfaced the following defects. Eac
 | BUG-002 | Hollywood Monsoon Night has mixed-up location and can't be found with the City filter | Medium | Medium |
 | BUG-003 | Booking form accepts phone numbers longer than 10 digits | Medium | Medium |
 | BUG-004 | Available seats don't update after booking | Low | Low |
+| BUG-005 | Cancelled bookings disappear instead of showing in the "Cancelled" filter | Medium | Medium |
 
 New bugs can be logged with the repository's GitHub **Bug report** issue template.
 
@@ -155,13 +166,15 @@ eventhub-automation/
 │   ├── BookingPage.ts
 │   ├── MyBookingsPage.ts
 │   ├── BookingDetailsPage.ts
-│   └── AdminEventsPage.ts
+│   ├── AdminEventsPage.ts
+│   └── AdminBookingsPage.ts
 ├── tests/                     # Test specs
 │   ├── register.spec.ts
 │   ├── login.spec.ts
 │   ├── event.spec.ts
 │   ├── booking.spec.ts
-│   └── admin.spec.ts
+│   ├── admin.spec.ts
+│   └── adminBookings.spec.ts
 ├── utils/
 │   └── testData.ts            # Credentials from .env
 ├── .env.example               # Template for local credentials (.env is git-ignored)
@@ -188,6 +201,7 @@ Locators and user actions live in page classes under `pages/`, so tests read as 
 | `MyBookingsPage` | booking cards, *Yes, cancel it* button | `viewBookingDetails(bookingRef)`, `cancelBooking(bookingRef)` |
 | `BookingDetailsPage` | ← Back to My Bookings button | `goBackToMyBookings()` |
 | `AdminEventsPage` | title, description, category, city, venue, event date & time, price, total seats, + Add Event button, Delete event confirm button | `addEvent(title, description, category, city, venue, date, price, seats)`, `editPrice(title, newPrice)`, `deleteEvent(title)` |
+| `AdminBookingsPage` | status filter, booking dialog, Close button, dialog Cancel button, *Yes, cancel it* button | `viewBooking(bookingRef)`, `clickCancel(bookingRef)`, `cancelBooking(bookingRef)`, `filterByStatus(status)` |
 
 Locators prefer user-facing queries (`getByRole`, `getByText`) and `data-testid` attributes (`getByTestId`) over CSS/XPath.
 
@@ -287,7 +301,7 @@ Key settings in `playwright.config.ts`:
 - [x] Event booking (Confirm Booking flow)
 - [x] My Bookings: view booking details, go back and cancel booking
 - [x] Admin – Manage Events: add, edit and delete events
-- [ ] Admin – Manage Bookings
+- [x] Admin – Manage Bookings: view, cancel and status filter
 - [x] Assertions for successful login and registration outcomes
 - [x] Negative login and registration scenarios (invalid credentials, validation messages)
 
