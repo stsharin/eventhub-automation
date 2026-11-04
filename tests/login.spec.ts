@@ -32,3 +32,29 @@ test('User should see errors when fields are empty', async ({page}) => {
     await expect(page.getByText('Enter a valid email')).toBeVisible();
     await expect(page.getByText('Password must be at least 6 characters')).toBeVisible();
 });
+
+test('User should logout successfully', async ({page}) => {
+    const loginPage = new LoginPage(page);
+    const navBar = new NavBar(page);
+    await page.goto('/login');
+    await loginPage.login(validUser.email, validUser.password);
+    await expect(navBar.logoutButton).toBeVisible();
+    await navBar.logout();
+    await expect(page).toHaveURL(/login/);
+    await expect(loginPage.signInButton).toBeVisible();
+});
+
+test('Logged out user should be redirected to login from My Bookings', async ({page}) => {
+    await page.goto('/bookings');
+    await expect(page).toHaveURL(/login/);
+});
+
+test('Logged out user should be redirected to login from Manage Events', async ({page}) => {
+    await page.goto('/admin/events');
+    await expect(page).toHaveURL(/login/);
+});
+
+test('Logged out user should be redirected to login from Manage Bookings', async ({page}) => {
+    await page.goto('/admin/bookings');
+    await expect(page).toHaveURL(/login/);
+});

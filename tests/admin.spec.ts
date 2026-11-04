@@ -41,3 +41,27 @@ test('User should add, edit and delete an event', async ({ page }) => {
     await adminEventsPage.deleteEvent(title);
     await expect(page.getByRole('row', { name: title })).not.toBeVisible();
 });
+test('User should see error with past date', async ({ page }) => {
+    const adminEventsPage = new AdminEventsPage(page);
+    await adminEventsPage.addEvent('Past Date Event', 'Test', 'Workshop', 'Mumbai', 'Test Hall', '2025-01-10T18:00', '100', '50');
+    await expect(page.getByText('Must be a future date')).toBeVisible();
+});
+test('User should see errors with negative price and 0 seats', async ({ page }) => {
+    const adminEventsPage = new AdminEventsPage(page);
+    await adminEventsPage.addEvent('Invalid Event', 'Test', 'Workshop', 'Mumbai', 'Test Hall', '2027-12-15T18:00', '-5', '0');
+    await expect(page.getByText('Enter a valid price (≥ 0)')).toBeVisible();
+    await expect(page.getByText('Must have at least 1 seat')).toBeVisible();
+});
+test('User should not save changes when edit is cancelled', async ({ page }) => {
+    const adminEventsPage = new AdminEventsPage(page);
+    const title = 'Cancel Edit Test ' + Date.now();
+
+    await adminEventsPage.addEvent(title, 'Test', 'Workshop', 'Mumbai', 'Test Hall', '2027-12-15T18:00', '100', '50');
+    await expect(page.getByRole('row', { name: title })).toContainText('$100');
+
+    await adminEventsPage.editPriceAndCancel(title, '999');
+    await expect(page.getByRole('row', { name: title })).toContainText('$100');
+
+    await adminEventsPage.deleteEvent(title);
+    await expect(page.getByRole('row', { name: title })).not.toBeVisible();
+});

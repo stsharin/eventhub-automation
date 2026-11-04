@@ -8,4 +8,8 @@ export class NavBar {
         this.page = page;
         this.logoutButton = page.getByRole('button', { name: 'Logout' });
     }
+
+    async logout() {
+        await this.logoutButton.click();
+    }
 }

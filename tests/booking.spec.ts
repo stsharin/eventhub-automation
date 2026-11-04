@@ -66,3 +66,63 @@ test('User should book, view details, go back and cancel booking', async ({ page
     await myBookingsPage.cancelBooking(bookingRef);
     await expect(myBookingsPage.bookingCards.filter({ hasText: bookingRef })).not.toBeVisible();
 });
+test('Ticket count should stay between 1 and 10', async ({ page }) => {
+    const bookingPage = new BookingPage(page);
+    await expect(bookingPage.decreaseTicketsButton).toBeDisabled();
+    for (let i = 0; i < 9; i++) {
+        await bookingPage.increaseTickets();
+    }
+    await expect(page.getByText('$300 × 10 tickets')).toBeVisible();
+    await expect(bookingPage.increaseTicketsButton).toBeDisabled();
+});
+test('User should keep booking when cancel is dismissed', async ({ page }) => {
+    const bookingPage = new BookingPage(page);
+    const myBookingsPage = new MyBookingsPage(page);
+
+    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
+    const bookingRef = await bookingPage.bookingRef.innerText();
+
+    await bookingPage.goToMyBookings();
+    await myBookingsPage.clickCancel(bookingRef);
+    await myBookingsPage.keepBookingButton.click();
+    await expect(myBookingsPage.bookingCards.filter({ hasText: bookingRef })).toBeVisible();
+
+    await myBookingsPage.cancelBooking(bookingRef);
+    await expect(myBookingsPage.bookingCards.filter({ hasText: bookingRef })).not.toBeVisible();
+});
+test('Single ticket booking should be eligible for refund', async ({ page }) => {
+    const bookingPage = new BookingPage(page);
+    const myBookingsPage = new MyBookingsPage(page);
+    const bookingDetailsPage = new BookingDetailsPage(page);
+
+    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
+    const bookingRef = await bookingPage.bookingRef.innerText();
+
+    await bookingPage.goToMyBookings();
+    await myBookingsPage.viewBookingDetails(bookingRef);
+    await bookingDetailsPage.checkRefund();
+    await expect(page.getByText('Eligible for refund. Single-ticket bookings qualify for a full refund.')).toBeVisible({ timeout: 10000 });
+
+    await bookingDetailsPage.goBackToMyBookings();
+    await myBookingsPage.cancelBooking(bookingRef);
+});
+test('Group booking should not be eligible for refund', async ({ page }) => {
+    const bookingPage = new BookingPage(page);
+    const myBookingsPage = new MyBookingsPage(page);
+    const bookingDetailsPage = new BookingDetailsPage(page);
+
+    await bookingPage.increaseTickets();
+    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
+    const bookingRef = await bookingPage.bookingRef.innerText();
+
+    await bookingPage.goToMyBookings();
+    await myBookingsPage.viewBookingDetails(bookingRef);
+    await bookingDetailsPage.checkRefund();
+    await expect(page.getByText('Not eligible for refund. Group bookings (2 tickets) are non-refundable.')).toBeVisible({ timeout: 10000 });
+
+    await bookingDetailsPage.goBackToMyBookings();
+    await myBookingsPage.cancelBooking(bookingRef);
+});

@@ -12,6 +12,7 @@ export class AdminEventsPage {
     readonly seatsInput: Locator;
     readonly addEventButton: Locator;
     readonly confirmDeleteButton: Locator;
+    readonly cancelEditButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -25,6 +26,7 @@ export class AdminEventsPage {
         this.seatsInput = page.getByLabel('Total Seats');
         this.addEventButton = page.getByTestId('add-event-btn');
         this.confirmDeleteButton = page.getByTestId('confirm-dialog-yes');
+        this.cancelEditButton = page.getByRole('button', { name: 'Cancel edit' });
     }
 
     async addEvent(title: string, description: string, category: string, city: string, venue: string, date: string, price: string, seats: string) {
@@ -43,6 +45,12 @@ export class AdminEventsPage {
         await this.page.getByRole('row', { name: title }).getByTestId('edit-event-btn').click();
         await this.priceInput.fill(newPrice);
         await this.addEventButton.click();
+    }
+
+    async editPriceAndCancel(title: string, newPrice: string) {
+        await this.page.getByRole('row', { name: title }).getByTestId('edit-event-btn').click();
+        await this.priceInput.fill(newPrice);
+        await this.cancelEditButton.click();
     }
 
     async deleteEvent(title: string) {
