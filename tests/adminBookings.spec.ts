@@ -4,7 +4,7 @@ import { EventsPage } from '../pages/EventsPage';
 import { BookingPage } from '../pages/BookingPage';
 import { AdminBookingsPage } from '../pages/AdminBookingsPage';
 import { NavBar } from '../pages/NavBar';
-import { validUser } from '../utils/testData';
+import { validUser, customer } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const navBar = new NavBar(page);
@@ -19,7 +19,7 @@ test('User should view, keep and cancel a booking in Manage Bookings', async ({ 
 
     await page.goto('/events');
     await eventsPage.clickBookNow();
-    await bookingPage.bookTicket('Admin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 
@@ -28,8 +28,8 @@ test('User should view, keep and cancel a booking in Manage Bookings', async ({ 
 
     await adminBookingsPage.viewBooking(bookingRef);
     await expect(adminBookingsPage.bookingDialog).toContainText(bookingRef);
-    await expect(adminBookingsPage.bookingDialog).toContainText('Admin Test');
-    await expect(adminBookingsPage.bookingDialog).toContainText('9876543210');
+    await expect(adminBookingsPage.bookingDialog).toContainText(customer.name);
+    await expect(adminBookingsPage.bookingDialog).toContainText(customer.phone);
     await adminBookingsPage.closeDialogButton.click();
     await expect(adminBookingsPage.bookingDialog).not.toBeVisible();
 
@@ -48,7 +48,7 @@ test('Cancelled booking should show in the Cancelled filter', async ({ page }) =
 
     await page.goto('/events');
     await eventsPage.clickBookNow();
-    await bookingPage.bookTicket('Admin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 

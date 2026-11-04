@@ -1,4 +1,5 @@
 import { Page, Locator } from '@playwright/test';
+import { featuredEvent } from '../utils/testData';
 export class EventDetailsPage {
   readonly page: Page;
   readonly eventName: Locator;
@@ -6,8 +7,8 @@ export class EventDetailsPage {
   readonly ticketPrice: Locator;
   constructor(page: Page) {
     this.page = page;
-    this.eventName = page.getByText('Dilli Diwali Mela', {exact: true});
-    this.venue = page.getByText('Pragati Maidan Exhibition Grounds', {exact: true});
+    this.eventName = page.getByText(featuredEvent.name, {exact: true});
+    this.venue = page.getByText(featuredEvent.venue, {exact: true});
     this.ticketPrice = page.getByRole('paragraph').filter({ hasText: '$' });
   }
 }

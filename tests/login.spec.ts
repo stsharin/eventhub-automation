@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from '../pages/LoginPage';
 import {NavBar} from '../pages/NavBar';
-import {validUser} from '../utils/testData';
+import {validUser, newUser, invalidData} from '../utils/testData';
 
 test('User should login successfully', async ({page}) => {
     const loginPage = new LoginPage(page);
@@ -14,14 +14,14 @@ test('User should login successfully', async ({page}) => {
 test('User should see error with wrong password', async ({page}) => {
     const loginPage = new LoginPage(page);
     await page.goto('/login');
-    await loginPage.login(validUser.email, 'wrongPass1!');
+    await loginPage.login(validUser.email, invalidData.wrongPassword);
     await expect(page.getByText('Invalid email or password')).toBeVisible();
 });
 
 test('User should see error with unregistered email', async ({page}) => {
     const loginPage = new LoginPage(page);
     await page.goto('/login');
-    await loginPage.login('notregistered12345@example.com', 'passworD123#');
+    await loginPage.login(invalidData.unregisteredEmail, newUser.password);
     await expect(page.getByText('Invalid email or password')).toBeVisible();
 });
 

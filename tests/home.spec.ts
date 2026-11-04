@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { HomePage } from '../pages/HomePage';
 import { NavBar } from '../pages/NavBar';
-import { validUser } from '../utils/testData';
+import { validUser, featuredEvent, otherEvents } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const navBar = new NavBar(page);
@@ -14,9 +14,9 @@ test.beforeEach(async ({ page }) => {
 test('User should see featured events on home page', async ({ page }) => {
     const homePage = new HomePage(page);
     await expect(homePage.featuredEventsHeading).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Dilli Diwali Mela' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Hollywood Monsoon Night — Los Angeles' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'World Tech Summit' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: featuredEvent.name })).toBeVisible();
+    await expect(page.getByRole('heading', { name: otherEvents.concert })).toBeVisible();
+    await expect(page.getByRole('heading', { name: otherEvents.conference })).toBeVisible();
 });
 test('Browse Events link should open events page', async ({ page }) => {
     const homePage = new HomePage(page);

@@ -3,7 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { EventsPage } from '../pages/EventsPage';
 import { EventDetailsPage } from '../pages/EventDetailsPage';
 import { NavBar } from '../pages/NavBar';
-import { validUser } from '../utils/testData';
+import { validUser, featuredEvent, otherEvents } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const navBar = new NavBar(page);
@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 test('User should see matching events', async ({ page }) => {
     const eventsPage = new EventsPage(page);
     await eventsPage.searchEvent('music');
-    await expect(page.getByText('Hollywood Monsoon Night — Los Angeles')).toBeVisible();
+    await expect(page.getByText(otherEvents.concert)).toBeVisible();
 });
 test('User should see no events found', async ({ page }) => {
     const eventsPage = new EventsPage(page);
@@ -26,12 +26,12 @@ test('User should see no events found', async ({ page }) => {
 test('User should filter events by category', async ({ page }) => {
     const eventsPage = new EventsPage(page);
     await eventsPage.filterByCategory('Conference');
-    await expect(page.getByText('World Tech Summit')).toBeVisible();
+    await expect(page.getByText(otherEvents.conference)).toBeVisible();
 });
 test('User should filter events by city', async ({ page }) => {
     const eventsPage = new EventsPage(page);
-    await eventsPage.filterByCity('Delhi');
-    await expect(page.getByText('Dilli Diwali Mela')).toBeVisible();
+    await eventsPage.filterByCity(featuredEvent.city);
+    await expect(page.getByText(featuredEvent.name)).toBeVisible();
 });
 test('Should show no events when the selected city has no matches', async ({ page }) => {
     const eventsPage = new EventsPage(page);
@@ -40,14 +40,14 @@ test('Should show no events when the selected city has no matches', async ({ pag
 });
 test('User should filter events by category and city', async ({ page }) => {
     const eventsPage = new EventsPage(page);
-    await eventsPage.filterByCategory('Festival');
-    await eventsPage.filterByCity('Delhi');
-    await expect(page.getByText('Dilli Diwali Mela')).toBeVisible();
+    await eventsPage.filterByCategory(featuredEvent.category);
+    await eventsPage.filterByCity(featuredEvent.city);
+    await expect(page.getByText(featuredEvent.name)).toBeVisible();
 });
 test('User should clear filters', async ({ page }) => {
     const eventsPage = new EventsPage(page);
-    await eventsPage.filterByCategory('Festival');
-    await eventsPage.filterByCity('Delhi');
+    await eventsPage.filterByCategory(featuredEvent.category);
+    await eventsPage.filterByCity(featuredEvent.city);
     await eventsPage.clearFilters();
     await expect(page.getByRole('combobox').first().locator('option:checked')).toHaveText('All Categories');
     await expect(page.getByRole('combobox').nth(1).locator('option:checked')).toHaveText('All Cities');

@@ -205,7 +205,7 @@ eventhub-automation/
 │   ├── admin.spec.ts
 │   └── adminBookings.spec.ts
 ├── utils/
-│   └── testData.ts            # Credentials from .env
+│   └── testData.ts            # Credentials from .env and shared test data
 ├── .env.example               # Template for local credentials (.env is git-ignored)
 ├── playwright.config.ts       # Browsers, base URL, reporter, screenshots, traces
 ├── tsconfig.json
@@ -344,7 +344,7 @@ Key settings in `playwright.config.ts`:
 - [x] Use `baseURL` with relative paths in `page.goto()`
 - [ ] Test fixtures for page objects and logged-in state
 - [x] Unique test users for registration
-- [ ] External test data files
+- [x] External test data files
 - [x] Credentials via environment variables (`.env`)
 - [ ] npm scripts for common test commands
 

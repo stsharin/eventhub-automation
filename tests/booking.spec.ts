@@ -5,7 +5,7 @@ import { BookingPage } from '../pages/BookingPage';
 import { MyBookingsPage } from '../pages/MyBookingsPage';
 import { BookingDetailsPage } from '../pages/BookingDetailsPage';
 import { NavBar } from '../pages/NavBar';
-import { validUser } from '../utils/testData';
+import { validUser, customer, invalidData, featuredEvent } from '../utils/testData';
 test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const eventsPage = new EventsPage(page);
@@ -19,15 +19,15 @@ test.beforeEach(async ({ page }) => {
 });
 test('User should book 1 ticket successfully', async ({ page }) => {
     const bookingPage = new BookingPage(page);
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     await expect(page.getByText('Your tickets are reserved.')).toBeVisible();
 });
 test('User should book 2 tickets successfully', async ({ page }) => {
     const bookingPage = new BookingPage(page);
     await bookingPage.increaseTickets();
-    await expect(page.getByText('$300 × 2 tickets')).toBeVisible();
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await expect(page.getByText(featuredEvent.ticketPrice + ' × 2 tickets')).toBeVisible();
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
 });
 test('User should see errors when booking form is empty', async ({ page }) => {
@@ -39,7 +39,7 @@ test('User should see errors when booking form is empty', async ({ page }) => {
 });
 test('User should see error with invalid phone number', async ({ page }) => {
     const bookingPage = new BookingPage(page);
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '12345');
+    await bookingPage.bookTicket(customer.name, validUser.email, invalidData.phone);
     await expect(page.getByText('Enter a valid 10-digit phone')).toBeVisible();
 });
 test('User should book, view details, go back and cancel booking', async ({ page }) => {
@@ -47,7 +47,7 @@ test('User should book, view details, go back and cancel booking', async ({ page
     const myBookingsPage = new MyBookingsPage(page);
     const bookingDetailsPage = new BookingDetailsPage(page);
 
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 
@@ -57,8 +57,8 @@ test('User should book, view details, go back and cancel booking', async ({ page
 
     await myBookingsPage.viewBookingDetails(bookingRef);
     await expect(page).toHaveURL(/bookings\//);
-    await expect(page.getByText('Sharin Test')).toBeVisible();
-    await expect(page.getByText('9876543210')).toBeVisible();
+    await expect(page.getByText(customer.name)).toBeVisible();
+    await expect(page.getByText(customer.phone)).toBeVisible();
 
     await bookingDetailsPage.goBackToMyBookings();
     await expect(page).toHaveURL(/bookings$/);
@@ -72,14 +72,14 @@ test('Ticket count should stay between 1 and 10', async ({ page }) => {
     for (let i = 0; i < 9; i++) {
         await bookingPage.increaseTickets();
     }
-    await expect(page.getByText('$300 × 10 tickets')).toBeVisible();
+    await expect(page.getByText(featuredEvent.ticketPrice + ' × 10 tickets')).toBeVisible();
     await expect(bookingPage.increaseTicketsButton).toBeDisabled();
 });
 test('User should keep booking when cancel is dismissed', async ({ page }) => {
     const bookingPage = new BookingPage(page);
     const myBookingsPage = new MyBookingsPage(page);
 
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 
@@ -96,7 +96,7 @@ test('Single ticket booking should be eligible for refund', async ({ page }) => 
     const myBookingsPage = new MyBookingsPage(page);
     const bookingDetailsPage = new BookingDetailsPage(page);
 
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 
@@ -114,7 +114,7 @@ test('Group booking should not be eligible for refund', async ({ page }) => {
     const bookingDetailsPage = new BookingDetailsPage(page);
 
     await bookingPage.increaseTickets();
-    await bookingPage.bookTicket('Sharin Test', validUser.email, '9876543210');
+    await bookingPage.bookTicket(customer.name, validUser.email, customer.phone);
     await expect(bookingPage.bookingConfirmedMessage).toBeVisible();
     const bookingRef = await bookingPage.bookingRef.innerText();
 

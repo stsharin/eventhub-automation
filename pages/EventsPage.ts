@@ -1,4 +1,5 @@
 import { Page, Locator } from '@playwright/test';
+import { featuredEvent } from '../utils/testData';
 export class EventsPage {
     readonly page: Page;
     readonly searchBox: Locator;
@@ -12,7 +13,7 @@ export class EventsPage {
         this.categoryFilter = page.getByRole('combobox').first();
         this.citiesFilter = page.getByRole('combobox').nth(1);
         this.clearFiltersButton = page.getByRole('button', { name: 'Clear filters' });
-        this.bookNowButton = page.getByRole('article').filter({ hasText: 'FestivalFeaturedDilli Diwali' }).getByTestId('book-now-btn');
+        this.bookNowButton = page.getByRole('article').filter({ hasText: featuredEvent.name }).getByTestId('book-now-btn');
     }
     async searchEvent(eventName: string) {
         await this.searchBox.fill(eventName);
